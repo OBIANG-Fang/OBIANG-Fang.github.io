@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi Médical - NephroSys</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Styles spécifiques à la page de suivi médical */
+        .medical-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .medical-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .patient-selector {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .patient-selector select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .medical-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .medical-dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .medical-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+        
+        .medical-card h3 {
+            color: #2c73d2;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .vital-signs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .vital-sign-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .vital-sign-item label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+        
+        .vital-sign-item .value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .vital-sign-item .trend {
+            font-size: 0.8rem;
+            margin-top: 0.2rem;
+        }
+        
+        .trend-up {
+            color: #ff4d4d;
+        }
+        
+        .trend-down {
+            color: #4CAF50;
+        }
+        
+        .trend-stable {
+            color: #ffa500;
+        }
+        
+        .medical-history {
+            margin-top: 2rem;
+        }
+        
+        .history-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1rem;
+        }
+        
+        .history-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .history-tab.active {
+            border-bottom: 2px solid #2c73d2;
+            color: #2c73d2;
+            font-weight: 600;
+        }
+        
+        .history-content {
+            min-height: 300px;
+        }
+        
+        .history-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .history-item-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .history-item-title {
+            font-weight: 600;
+        }
+        
+        .history-item-details {
+            color: #555;
+            font-size: 0.95rem;
+        }
+        
+        .medical-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .medical-actions button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .primary-btn {
+            background-color: #2c73d2;
+            color: white;
+        }
+        
+        .secondary-btn {
+            background-color: #f0f5ff;
+            color: #2c73d2;
+            border: 1px solid #2c73d2;
+        }
+        
+        .warning-btn {
+            background-color: #ffa500;
+            color: white;
+        }
+        
+        .alert {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffa500;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .alert i {
+            color: #ffa500;
+            font-size: 1.2rem;
+        }
+        
+        .alert-danger {
+            background-color: #ffebee;
+            border-left-color: #ff4d4d;
+        }
+        
+        .alert-danger i {
+            color: #ff4d4d;
+        }
+        
+        .alert-info {
+            background-color: #e3f2fd;
+            border-left-color: #2c73d2;
+        }
+        
+        .alert-info i {
+            color: #2c73d2;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>NephroSys</h1>
+            <p>Gestion complète de dialyse</p>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Accueil</a></li>
+                <li><a href="patients.html">Patients</a></li>
+                <li><a href="planning.html">Planning</a></li>
+                <li><a href="medical.html" class="active">Suivi Médical</a></li>
+                <li><a href="pharmacy.html">Pharmacie</a></li>
+                <li><a href="billing.html">Facturation</a></li>
+                <li><a href="statistics.html">Statistiques</a></li>
+            </ul>
+        </nav>
+        <div class="user-menu">
+            <button><i class="fas fa-user"></i> Connexion</button>
+        </div>
+    </header>
+
+    <main class="medical-container">
+        <div class="medical-header">
+            <h1>Suivi Médical</h1>
+            <div class="medical-actions">
+                <button class="primary-btn" id="new-record-btn"><i class="fas fa-plus"></i> Nouvelle saisie</button>
+                <button class="secondary-btn" id="print-btn"><i class="fas fa-print"></i> Imprimer</button>
+            </div>
+        </div>
+        
+        <div class="patient-selector">
+            <h2 style="margin-bottom: 1rem;">Sélectionner un patient</h2>
+            <select id="patient-select">
+                <option value="">-- Choisir un patient --</option>
+                <option value="P-001">P-001 - Dupont Jean</option>
+                <option value="P-002">P-002 - Martin Sophie</option>
+                <option value="P-003">P-003 - Petit Robert</option>
+                <option value="P-004">P-004 - Dubois Marie</option>
+                <option value="P-005">P-005 - Leroy Thomas</option>
+            </select>
+        </div>
+        
+        <div id="patient-alerts">
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <strong>Alerte médicale:</strong> Hyperkaliémie détectée lors de la dernière séance (K+ = 6.2 mmol/L)
+                </div>
+            </div>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Information:</strong> Prochain bilan sanguin prévu le 25/06/2023
+                </div>
+            </div>
+        </div>
+        
+        <div class="medical-dashboard">
+            <div class="medical-card">
+                <h3><i class="fas fa-heartbeat"></i> Constantes vitales</h3>
+                <div class="vital-signs">
+                    <div class="vital-sign-item">
+                        <label>Poids sec</label>
+                        <div class="value">72.5 kg</div>
+                    </div>
+                    <div class="vital-sign-item">
+                        <label>Poids avant dialyse</label>
+                        <div class="value">74.8 kg</div>
+                        <div class="trend trend-up">+2.3 kg</div>
+                    </div>
+                    <div class="vital-sign-item">
+                        <label>Tension artérielle</label>
+                        <div class="value">145/90 mmHg</div>
+                        <div class="trend trend-up">↑</div>
+                    </div>
+                    <div class="vital-sign-item">
+                        <label>Fréquence cardiaque</label>
+                        <div class="value">82 bpm</div>
+                        <div class="trend trend-stable">→</div>
+                    </div>
+                    <div class="vital-sign-item">
+                        <label>Température</label>
+                        <div class="value">36.8 °C</div>
+                        <div class="trend trend-stable">→</div>
+                    </div>
+                    <div class="vital-sign-item">
+                        <label>SpO2</label>
+                        <div class="value">97 %</div>
+                        <div class="trend trend-stable">→</div>
+                    </div>
+                </div>
+                <div class="medical-actions">
+                    <button class="secondary-btn" id="record-vitals-btn"><i class="fas fa-edit"></i> Saisir constantes</button>
+                </div>
+            </div>
+            
+            <div class="medical-card">
+                <h3><i class="fas fa-pills"></i> Traitement actuel</h3>
+                <div class="history-item">
+                    <div class="history-item-title">Calciparine 5000 UI</div>
+                    <div class="history-item-details">2 injections par séance de dialyse</div>
+                </div>
+                <div class="history-item">
+                    <div class="history-item-title">Aranesp 40 mcg</div>
+                    <div class="history-item-details">1 injection par semaine</div>
+                </div>
+                <div class="history-item">
+                    <div class="history-item-title">Renvela 800 mg</div>
+                    <div class="history-item-details">1 comprimé 3 fois par jour avec les repas</div>
+                </div>
+                <div class="history-item">
+                    <div class="history-item-title">Lovenox 4000 UI</div>
+                    <div class="history-item-details">1 injection sous-cutanée par jour</div>
+                </div>
+                <div class="medical-actions">
+                    <button class="secondary-btn" id="manage-treatment-btn"><i class="fas fa-edit"></i> Gérer traitement</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="medical-card medical-history">
+            <h3><i class="fas fa-history"></i> Historique médical</h3>
+            
+            <div class="history-tabs">
+                <div class="history-tab active" data-tab="dialysis">Séances de dialyse</div>
+                <div class="history-tab" data-tab="complications">Complications</div>
+                <div class="history-tab" data-tab="labs">Résultats de laboratoire</div>
+                <div class="history-tab" data-tab="prescriptions">Prescriptions</div>
+            </div>
+            
+            <div class="history-content" id="dialysis-content">
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-item-title">Séance d'hémodialyse</div>
+                        <div class="history-item-date">12/06/2023</div>
+                    </div>
+                    <div class="history-item-details">
+                        Durée: 4h00 | Poids avant: 74.8 kg | Poids après: 72.3 kg | UF: 2500 ml<br>
+                        TA début: 145/90 mmHg | TA fin: 135/85 mmHg | Pouls: 82 bpm<br>
+                        Observations: Séance bien tolérée, pas de complications
+                    </div>
+                </div>
+                
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-item-title">Séance d'hémodialyse</div>
+                        <div class="history-item-date">10/06/2023</div>
+                    </div>
+                    <div class="history-item-details">
+                        Durée: 4h00 | Poids avant: 75.2 kg | Poids après: 72.6 kg | UF: 2600 ml<br>
+                        TA début: 150/95 mmHg | TA fin: 130/80 mmHg | Pouls: 85 bpm<br>
+                        Observations: Crampes en fin de séance, réduction de l'UF
+                    </div>
+                </div>
+                
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-item-title">Séance d'hémodialyse</div>
+                        <div class="history-item-date">08/06/2023</div>
+                    </div>
+                    <div class="history-item-details">
+                        Durée: 4h00 | Poids avant: 74.5 kg | Poids après: 72.2 kg | UF: 2300 ml<br>
+                        TA début: 140/85 mmHg | TA fin: 130/80 mmHg | Pouls: 80 bpm<br>
+                        Observations: Séance bien tolérée
+                    </div>
+                </div>
+            </div>
+            
+            <div class="history-content" id="complications-content" style="display: none;">
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-item-title">Hypotension intra-dialytique</div>
+                        <div class="history-item-date">05/06/2023</div>
+                    </div>
+                    <div class="history-item-details">
+                        TA: 90/60 mmHg | Symptômes: Vertiges, nausées<br>
+                        Actions: Réduction de l'UF, position de Trendelenburg, perfusion de sérum physiologique<br>
+                        Résolution: Complète après 30 minutes
+                    </div>
+                </div>
+                
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-item-title">Coagulation du circuit</div>
+                        <div class="history-item-date">28/05/2023</div>
+                    </div>
+                    <div class="history-item-details">
+                        Cause probable: Dose d'anticoagulant insuffisante<br>
+                        Actions: Changement du circuit, ajustement du protocole d'anticoagulation<br>
+                        Suivi: Surveillance accrue lors des prochaines séances
+                    </div>
+                </div>
+            </div>
+            
+            <div class="history-content" id="labs-content" style="display: none;">
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-item-title">Bilan sanguin mensuel</div>
+                        <div class="history-item-date">01/06/2023</div>
+                    </div>
+                    <div class="history-item-details">
+                        Hémoglobine: 10.5 g/dL | Hématocrite: 32% | Leucocytes: 7500/mm³<br>
+                        Urée: 25 mmol/L | Créatinine: 850 µmol/L | K+: 5.2 mmol/L | Ca++: 2.2 mmol/L<br>
+                        Phosphore: 1.8 mmol/L | Albumine: 38 g/L | CRP: 5 mg/L<br>
+                        Ferritine: 250 µg/L | Coefficient de saturation de la transferrine: 25%
+                    </div>
+                </div>
+                
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-item-title">Bilan sanguin mensuel</div>
+                        <div class="history-item-date">02/05/2023</div>
+                    </div>
+                    <div class="history-item-details">
+                        Hémoglobine: 10.2 g/dL | Hématocrite: 31% | Leucocytes: 7200/mm³<br>
+                        Urée: 26 mmol/L | Créatinine: 870 µmol/L | K+: 5.0 mmol/L | Ca++: 2.3 mmol/L<br>
+                        Phosphore: 1.7 mmol/L | Albumine: 39 g/L | CRP: 3 mg/L<br>
+                        Ferritine: 220 µg/L | Coefficient de saturation de la transferrine: 23%
+                    </div>
+                </div>
+            </div>
+            
+            <div class="history-content" id="prescriptions-content" style="display: none;">
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-item-title">Modification du traitement</div>
+                        <div class="history-item-date">05/06/2023</div>
+                    </div>
+                    <div class="history-item-details">
+                        Médecin: Dr. Lambert<br>
+                        Ajout: Renvela 800 mg, 1 comprimé 3 fois par jour avec les repas<br>
+                        Motif: Hyperphosphorémie
+                    </div>
+                </div>
+                
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <div class="history-item-title">Modification du protocole de dialyse</div>
+                        <div class="history-item-date">15/05/2023</div>
+                    </div>
+                    <div class="history-item-details">
+                        Médecin: Dr. Lambert<br>
+                        Modification: Augmentation de la durée de dialyse à 4h30<br>
+                        Motif: Amélioration de l'épuration des moyennes molécules
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Formulaire de saisie des constantes (caché par défaut) -->
+        <div id="vitals-form" class="medical-card" style="display: none; margin-top: 2rem;">
+            <h3><i class="fas fa-edit"></i> Saisie des constantes vitales</h3>
+            <form id="record-vitals-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="weight">Poids (kg)</label>
+                        <input type="number" id="weight" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="temperature">Température (°C)</label>
+                        <input type="number" id="temperature" step="0.1" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="systolic">Tension artérielle systolique (mmHg)</label>
+                        <input type="number" id="systolic" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="diastolic">Tension artérielle diastolique (mmHg)</label>
+                        <input type="number" id="diastolic" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="heart-rate">Fréquence cardiaque (bpm)</label>
+                        <input type="number" id="heart-rate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="spo2">SpO2 (%)</label>
+                        <input type="number" id="spo2" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Observations</label>
+                    <textarea id="notes"></textarea>
+                </div>
+                <div class="medical-actions">
+                    <button type="submit" class="primary-btn"><i class="fas fa-save"></i> Enregistrer</button>
+                    <button type="button" class="secondary-btn" id="cancel-vitals-btn"><i class="fas fa-times"></i> Annuler</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>NephroSys</h3>
+                <p>Solution complète pour la gestion des centres de dialyse</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-envelope"></i> contact@nephrosys.com</p>
+                <p><i class="fas fa-phone"></i> +33 1 23 45 67 89</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens rapides</h3>
+                <ul>
+                    <li><a href="#">À propos</a></li>
+                    <li><a href="#">Fonctionnalités</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Mentions légales</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 NephroSys - Tous droits réservés</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="medical.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

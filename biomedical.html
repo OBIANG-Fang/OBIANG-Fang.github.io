@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NephroSys - Gestion Biomédicale</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Styles spécifiques à la page biomédical */
+        .biomedical-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .biomedical-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .biomedical-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .biomedical-actions button {
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .primary-btn {
+            background-color: #2c73d2;
+            color: white;
+            border: none;
+        }
+        
+        .secondary-btn {
+            background-color: white;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        .tab-container {
+            margin-bottom: 2rem;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .tab-btn.active {
+            color: #2c73d2;
+            border-bottom-color: #2c73d2;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .machines-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .machine-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            position: relative;
+        }
+        
+        .machine-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+        
+        .status-online {
+            background-color: #4CAF50;
+        }
+        
+        .status-offline {
+            background-color: #f44336;
+        }
+        
+        .status-maintenance {
+            background-color: #FF9800;
+        }
+        
+        .machine-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .machine-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: #2c73d2;
+        }
+        
+        .machine-info h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.2rem;
+        }
+        
+        .machine-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .machine-data {
+            margin-top: 1rem;
+            border-top: 1px solid #eee;
+            padding-top: 1rem;
+        }
+        
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .data-label {
+            color: #666;
+        }
+        
+        .data-value {
+            font-weight: 500;
+        }
+        
+        .machine-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .logs-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .logs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .logs-table th, .logs-table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .logs-table th {
+            background-color: #f9f9f9;
+            font-weight: 500;
+        }
+        
+        .logs-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .log-level {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .level-info {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+        }
+        
+        .level-warning {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+        
+        .level-error {
+            background-color: #ffebee;
+            color: #b71c1c;
+        }
+        
+        .integration-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .integration-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .integration-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            color: #2c73d2;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e3f2fd;
+            border-radius: 8px;
+        }
+        
+        .integration-status {
+            margin-left: auto;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-inactive {
+            background-color: #f5f5f5;
+            color: #757575;
+        }
+        
+        .integration-body {
+            margin-bottom: 1rem;
+        }
+        
+        .integration-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1><i class="fas fa-kidney"></i> NephroSys</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="patients.html"><i class="fas fa-user"></i> Patients</a></li>
+                <li><a href="medical.html"><i class="fas fa-heartbeat"></i> Suivi médical</a></li>
+                <li><a href="planning.html"><i class="fas fa-calendar-alt"></i> Planning</a></li>
+                <li><a href="pharmacie.html"><i class="fas fa-pills"></i> Pharmacie</a></li>
+                <li><a href="billing.html"><i class="fas fa-file-invoice"></i> Facturation</a></li>
+                <li><a href="statistics.html"><i class="fas fa-chart-bar"></i> Statistiques</a></li>
+                <li class="active"><a href="biomedical.html"><i class="fas fa-microscope"></i> Biomédical</a></li>
+            </ul>
+        </nav>
+        <div class="user-menu">
+            <button class="login-btn"><i class="fas fa-sign-in-alt"></i> Connexion</button>
+        </div>
+    </header>
+
+    <main class="biomedical-container">
+        <div class="biomedical-header">
+            <h2><i class="fas fa-microscope"></i> Gestion Biomédicale</h2>
+            <div class="biomedical-actions">
+                <button class="primary-btn"><i class="fas fa-plus"></i> Ajouter un équipement</button>
+                <button class="secondary-btn"><i class="fas fa-sync-alt"></i> Actualiser</button>
+                <button class="secondary-btn"><i class="fas fa-cog"></i> Paramètres</button>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="machines">Machines de dialyse</button>
+                <button class="tab-btn" data-tab="integrations">Intégrations</button>
+                <button class="tab-btn" data-tab="logs">Journaux d'activité</button>
+                <button class="tab-btn" data-tab="maintenance">Maintenance</button>
+            </div>
+
+            <div id="machines" class="tab-content active">
+                <div class="machines-grid">
+                    <div class="machine-card">
+                        <div class="machine-status status-online"></div>
+                        <div class="machine-header">
+                            <div class="machine-icon">
+                                <i class="fas fa-laptop-medical"></i>
+                            </div>
+                            <div class="machine-info">
+                                <h3>Fresenius 5008</h3>
+                                <p>ID: MD-001 | Salle: A1</p>
+                            </div>
+                        </div>
+                        <div class="machine-data">
+                            <div class="data-item">
+                                <span class="data-label">Dernière utilisation:</span>
+                                <span class="data-value">Aujourd'hui, 10:30</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">Heures d'utilisation:</span>
+                                <span class="data-value">1245 h</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">Prochaine maintenance:</span>
+                                <span class="data-value">15/08/2023</span>
+                            </div>
+                        </div>
+                        <div class="machine-actions">
+                            <button class="secondary-btn"><i class="fas fa-eye"></i> Détails</button>
+                            <button class="secondary-btn"><i class="fas fa-history"></i> Historique</button>
+                        </div>
+                    </div>
+                    
+                    <div class="machine-card">
+                        <div class="machine-status status-offline"></div>
+                        <div class="machine-header">
+                            <div class="machine-icon">
+                                <i class="fas fa-laptop-medical"></i>
+                            </div>
+                            <div class="machine-info">
+                                <h3>Nikkiso DBB-07</h3>
+                                <p>ID: MD-002 | Salle: A2</p>
+                            </div>
+                        </div>
+                        <div class="machine-data">
+                            <div class="data-item">
+                                <span class="data-label">Dernière utilisation:</span>
+                                <span class="data-value">Hier, 16:45</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">Heures d'utilisation:</span>
+                                <span class="data-value">876 h</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">Prochaine maintenance:</span>
+                                <span class="data-value">05/08/2023</span>
+                            </div>
+                        </div>
+                        <div class="machine-actions">
+                            <button class="secondary-btn"><i class="fas fa-eye"></i> Détails</button>
+                            <button class="secondary-btn"><i class="fas fa-history"></i> Historique</button>
+                        </div>
+                    </div>
+                    
+                    <div class="machine-card">
+                        <div class="machine-status status-maintenance"></div>
+                        <div class="machine-header">
+                            <div class="machine-icon">
+                                <i class="fas fa-laptop-medical"></i>
+                            </div>
+                            <div class="machine-info">
+                                <h3>B. Braun Dialog+</h3>
+                                <p>ID: MD-003 | Salle: B1</p>
+                            </div>
+                        </div>
+                        <div class="machine-data">
+                            <div class="data-item">
+                                <span class="data-label">Dernière utilisation:</span>
+                                <span class="data-value">10/07/2023</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">Heures d'utilisation:</span>
+                                <span class="data-value">1532 h</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">Prochaine maintenance:</span>
+                                <span class="data-value">En cours</span>
+                            </div>
+                        </div>
+                        <div class="machine-actions">
+                            <button class="secondary-btn"><i class="fas fa-eye"></i> Détails</button>
+                            <button class="secondary-btn"><i class="fas fa-history"></i> Historique</button>
+                        </div>
+                    </div>
+                    
+                    <div class="machine-card">
+                        <div class="machine-status status-online"></div>
+                        <div class="machine-header">
+                            <div class="machine-icon">
+                                <i class="fas fa-laptop-medical"></i>
+                            </div>
+                            <div class="machine-info">
+                                <h3>Fresenius 4008S</h3>
+                                <p>ID: MD-004 | Salle: B2</p>
+                            </div>
+                        </div>
+                        <div class="machine-data">
+                            <div class="data-item">
+                                <span class="data-label">Dernière utilisation:</span>
+                                <span class="data-value">Aujourd'hui, 09:15</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">Heures d'utilisation:</span>
+                                <span class="data-value">2145 h</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">Prochaine maintenance:</span>
+                                <span class="data-value">20/08/2023</span>
+                            </div>
+                        </div>
+                        <div class="machine-actions">
+                            <button class="secondary-btn"><i class="fas fa-eye"></i> Détails</button>
+                            <button class="secondary-btn"><i class="fas fa-history"></i> Historique</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="integrations" class="tab-content">
+                <div class="integration-card">
+                    <div class="integration-header">
+                        <div class="integration-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <h3>Intégration HL7</h3>
+                        <span class="integration-status status-active">Actif</span>
+                    </div>
+                    <div class="integration-body">
+                        <p>Cette intégration permet l'échange de données médicales standardisées avec d'autres systèmes de santé via le protocole HL7.</p>
+                        <div class="data-item">
+                            <span class="data-label">Dernier échange:</span>
+                            <span class="data-value">Aujourd'hui, 11:23</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Messages échangés:</span>
+                            <span class="data-value">1245</span>
+                        </div>
+                    </div>
+                    <div class="integration-actions">
+                        <button class="secondary-btn"><i class="fas fa-cog"></i> Configurer</button>
+                        <button class="secondary-btn"><i class="fas fa-history"></i> Historique</button>
+                    </div>
+                </div>
+                
+                <div class="integration-card">
+                    <div class="integration-header">
+                        <div class="integration-icon">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <h3>Intégration FHIR</h3>
+                        <span class="integration-status status-active">Actif</span>
+                    </div>
+                    <div class="integration-body">
+                        <p>Cette intégration permet l'échange de données médicales via le standard FHIR (Fast Healthcare Interoperability Resources).</p>
+                        <div class="data-item">
+                            <span class="data-label">Dernier échange:</span>
+                            <span class="data-value">Aujourd'hui, 10:45</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Ressources échangées:</span>
+                            <span class="data-value">876</span>
+                        </div>
+                    </div>
+                    <div class="integration-actions">
+                        <button class="secondary-btn"><i class="fas fa-cog"></i> Configurer</button>
+                        <button class="secondary-btn"><i class="fas fa-history"></i> Historique</button>
+                    </div>
+                </div>
+                
+                <div class="integration-card">
+                    <div class="integration-header">
+                        <div class="integration-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3>Intégration DICOM</h3>
+                        <span class="integration-status status-inactive">Inactif</span>
+                    </div>
+                    <div class="integration-body">
+                        <p>Cette intégration permet l'échange d'images médicales via le standard DICOM (Digital Imaging and Communications in Medicine).</p>
+                        <div class="data-item">
+                            <span class="data-label">Dernier échange:</span>
+                            <span class="data-value">Jamais</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Images échangées:</span>
+                            <span class="data-value">0</span>
+                        </div>
+                    </div>
+                    <div class="integration-actions">
+                        <button class="primary-btn"><i class="fas fa-play"></i> Activer</button>
+                        <button class="secondary-btn"><i class="fas fa-cog"></i> Configurer</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="logs" class="tab-content">
+                <div class="logs-container">
+                    <div class="logs-header">
+                        <h3>Journaux d'activité</h3>
+                        <div class="biomedical-actions">
+                            <button class="secondary-btn"><i class="fas fa-filter"></i> Filtrer</button>
+                            <button class="secondary-btn"><i class="fas fa-download"></i> Exporter</button>
+                        </div>
+                    </div>
+                    <table class="logs-table">
+                        <thead>
+                            <tr>
+                                <th>Date & Heure</th>
+                                <th>Équipement</th>
+                                <th>Événement</th>
+                                <th>Niveau</th>
+                                <th>Utilisateur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>15/07/2023 11:23</td>
+                                <td>Fresenius 5008 (MD-001)</td>
+                                <td>Connexion établie</td>
+                                <td><span class="log-level level-info">Info</span></td>
+                                <td>Système</td>
+                            </tr>
+                            <tr>
+                                <td>15/07/2023 10:45</td>
+                                <td>Nikkiso DBB-07 (MD-002)</td>
+                                <td>Déconnexion</td>
+                                <td><span class="log-level level-warning">Avertissement</span></td>
+                                <td>Système</td>
+                            </tr>
+                            <tr>
+                                <td>15/07/2023 09:30</td>
+                                <td>B. Braun Dialog+ (MD-003)</td>
+                                <td>Début de maintenance</td>
+                                <td><span class="log-level level-info">Info</span></td>
+                                <td>Tech. Martin</td>
+                            </tr>
+                            <tr>
+                                <td>14/07/2023 16:45</td>
+                                <td>Fresenius 4008S (MD-004)</td>
+                                <td>Alerte pression</td>
+                                <td><span class="log-level level-error">Erreur</span></td>
+                                <td>Dr. Dupont</td>
+                            </tr>
+                            <tr>
+                                <td>14/07/2023 15:20</td>
+                                <td>Fresenius 5008 (MD-001)</td>
+                                <td>Fin de séance</td>
+                                <td><span class="log-level level-info">Info</span></td>
+                                <td>Inf. Dubois</td>
+                            </tr>
+                            <tr>
+                                <td>14/07/2023 12:10</td>
+                                <td>Nikkiso DBB-07 (MD-002)</td>
+                                <td>Début de séance</td>
+                                <td><span class="log-level level-info">Info</span></td>
+                                <td>Inf. Moreau</td>
+                            </tr>
+                            <tr>
+                                <td>14/07/2023 10:05</td>
+                                <td>Fresenius 4008S (MD-004)</td>
+                                <td>Calibration</td>
+                                <td><span class="log-level level-info">Info</span></td>
+                                <td>Tech. Martin</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="maintenance" class="tab-content">
+                <div class="logs-container">
+                    <div class="logs-header">
+                        <h3>Calendrier de maintenance</h3>
+                        <div class="biomedical-actions">
+                            <button class="primary-btn"><i class="fas fa-plus"></i> Planifier</button>
+                            <button class="secondary-btn"><i class="fas fa-print"></i> Imprimer</button>
+                        </div>
+                    </div>
+                    <table class="logs-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Équipement</th>
+                                <th>Type</th>
+                                <th>Technicien</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>15/07/2023</td>
+                                <td>B. Braun Dialog+ (MD-003)</td>
+                                <td>Maintenance complète</td>
+                                <td>Tech. Martin</td>
+                                <td><span class="log-level level-warning">En cours</span></td>
+                                <td>
+                                    <button class="secondary-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="secondary-btn"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>05/08/2023</td>
+                                <td>Nikkiso DBB-07 (MD-002)</td>
+                                <td>Vérification routine</td>
+                                <td>Tech. Bernard</td>
+                                <td><span class="log-level level-info">Planifié</span></td>
+                                <td>
+                                    <button class="secondary-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="secondary-btn"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>15/08/2023</td>
+                                <td>Fresenius 5008 (MD-001)</td>
+                                <td>Calibration</td>
+                                <td>Tech. Martin</td>
+                                <td><span class="log-level level-info">Planifié</span></td>
+                                <td>
+                                    <button class="secondary-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="secondary-btn"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>20/08/2023</td>
+                                <td>Fresenius 4008S (MD-004)</td>
+                                <td>Maintenance complète</td>
+                                <td>Tech. Bernard</td>
+                                <td><span class="log-level level-info">Planifié</span></td>
+                                <td>
+                                    <button class="secondary-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="secondary-btn"><i class="fas fa-edit"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>10/07/2023</td>
+                                <td>Fresenius 5008 (MD-001)</td>
+                                <td>Vérification routine</td>
+                                <td>Tech. Martin</td>
+                                <td><span class="log-level level-info">Terminé</span></td>
+                                <td>
+                                    <button class="secondary-btn"><i class="fas fa-eye"></i></button>
+                                    <button class="secondary-btn"><i class="fas fa-file-pdf"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>NephroSys</h3>
+                <p>Système de gestion pour centres de dialyse</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p><i class="fas fa-envelope"></i> contact@nephrosys.com</p>
+                <p><i class="fas fa-phone"></i> +33 1 23 45 67 89</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 NephroSys - Tous droits réservés</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="biomedical.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacie & Consommables - NephroSys</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1><i class="fas fa-kidney"></i> NephroSys</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+                <li><a href="patients.html"><i class="fas fa-user"></i> Patients</a></li>
+                <li><a href="medical.html"><i class="fas fa-heartbeat"></i> Suivi médical</a></li>
+                <li><a href="planning.html"><i class="fas fa-calendar-alt"></i> Planning</a></li>
+                <li class="active"><a href="pharmacie.html"><i class="fas fa-pills"></i> Pharmacie</a></li>
+                <li><a href="facturation.html"><i class="fas fa-file-invoice"></i> Facturation</a></li>
+                <li><a href="statistiques.html"><i class="fas fa-chart-bar"></i> Statistiques</a></li>
+                <li><a href="biomedical.html"><i class="fas fa-microscope"></i> Biomédical</a></li>
+            </ul>
+        </nav>
+        <div class="user-menu">
+            <span>Dr. Dupont <i class="fas fa-angle-down"></i></span>
+            <div class="dropdown-menu">
+                <a href="#"><i class="fas fa-user-cog"></i> Profil</a>
+                <a href="#"><i class="fas fa-cog"></i> Paramètres</a>
+                <a href="#"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="dashboard-header">
+            <h2><i class="fas fa-pills"></i> Gestion de la Pharmacie & Consommables</h2>
+            <div class="dashboard-actions">
+                <button id="add-product-btn" class="btn primary"><i class="fas fa-plus"></i> Nouveau produit</button>
+                <button id="print-inventory-btn" class="btn secondary"><i class="fas fa-print"></i> Imprimer</button>
+                <button id="export-inventory-btn" class="btn secondary"><i class="fas fa-file-export"></i> Exporter</button>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="dashboard-filters">
+                <div class="filter-group">
+                    <label for="category-filter">Catégorie:</label>
+                    <select id="category-filter">
+                        <option value="all">Toutes les catégories</option>
+                        <option value="medicaments">Médicaments</option>
+                        <option value="consommables">Consommables</option>
+                        <option value="dialyseurs">Dialyseurs</option>
+                        <option value="solutions">Solutions</option>
+                        <option value="urgence">Médicaments d'urgence</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="stock-filter">Stock:</label>
+                    <select id="stock-filter">
+                        <option value="all">Tous</option>
+                        <option value="low">Stock bas</option>
+                        <option value="out">Rupture de stock</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <input type="text" id="search-inventory" placeholder="Rechercher un produit...">
+                    <button class="btn icon"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+
+            <div class="inventory-container">
+                <table class="data-table" id="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>Référence</th>
+                            <th>Nom du produit</th>
+                            <th>Catégorie</th>
+                            <th>Stock actuel</th>
+                            <th>Stock minimum</th>
+                            <th>Date d'expiration</th>
+                            <th>Fournisseur</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Les données seront chargées dynamiquement via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Formulaire d'ajout/modification de produit (caché par défaut) -->
+        <div id="product-form" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="form-title">Ajouter un nouveau produit</h3>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="add-product-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-reference">Référence:</label>
+                                <input type="text" id="product-reference" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-name">Nom du produit:</label>
+                                <input type="text" id="product-name" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-category">Catégorie:</label>
+                                <select id="product-category" required>
+                                    <option value="">Sélectionner une catégorie</option>
+                                    <option value="medicaments">Médicaments</option>
+                                    <option value="consommables">Consommables</option>
+                                    <option value="dialyseurs">Dialyseurs</option>
+                                    <option value="solutions">Solutions</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-supplier">Fournisseur:</label>
+                                <input type="text" id="product-supplier">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-stock">Stock actuel:</label>
+                                <input type="number" id="product-stock" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-min-stock">Stock minimum:</label>
+                                <input type="number" id="product-min-stock" min="0" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-expiry">Date d'expiration:</label>
+                                <input type="date" id="product-expiry">
+                            </div>
+                            <div class="form-group">
+                                <label for="product-price">Prix unitaire (€):</label>
+                                <input type="number" id="product-price" min="0" step="0.01">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-notes">Notes:</label>
+                            <textarea id="product-notes" rows="3"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="cancel-product-btn" class="btn secondary">Annuler</button>
+                            <button type="submit" class="btn primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire de mouvement de stock (caché par défaut) -->
+        <div id="stock-movement-form" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Mouvement de stock</h3>
+                    <span class="close-modal">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="add-movement-form">
+                        <input type="hidden" id="movement-product-id">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="movement-type">Type de mouvement:</label>
+                                <select id="movement-type" required>
+                                    <option value="">Sélectionner un type</option>
+                                    <option value="in">Entrée</option>
+                                    <option value="out">Sortie</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="movement-quantity">Quantité:</label>
+                                <input type="number" id="movement-quantity" min="1" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="movement-reason">Motif:</label>
+                            <select id="movement-reason" required>
+                                <option value="">Sélectionner un motif</option>
+                                <option value="purchase">Achat</option>
+                                <option value="consumption">Consommation</option>
+                                <option value="transfer">Transfert</option>
+                                <option value="adjustment">Ajustement</option>
+                                <option value="expiry">Péremption</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="movement-notes">Notes:</label>
+                            <textarea id="movement-notes" rows="2"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="cancel-movement-btn" class="btn secondary">Annuler</button>
+                            <button type="submit" class="btn primary">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>NephroSys</h3>
+                <p>Solution complète de gestion pour centres de dialyse</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact</h3>
+                <p>Email: contact@nephrosys.com</p>
+                <p>Téléphone: +33 1 23 45 67 89</p>
+            </div>
+            <div class="footer-section">
+                <h3>Liens utiles</h3>
+                <ul>
+                    <li><a href="#">Aide</a></li>
+                    <li><a href="#">Fonctionnalités</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Mentions légales</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 NephroSys - Tous droits réservés</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="pharmacie.js"></script>
+</body>
+</html>
